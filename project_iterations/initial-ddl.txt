@@ -1,0 +1,259 @@
+
+--Product(id_product, name)
+
+create table eshop_product(
+	id_product serial primary key,
+	product_name varchar(100) not null
+);
+
+insert into eshop_product(product_name)
+values
+    ('Sugar Bowl and Creamer in Magnolia by Mikado'),
+    ('Footed Cup & Saucer Set in Magnolia by MIKADO Set of 10'),
+    ('General Electric Television Camera 300, Model 4TE25A1 Local Pick Up or Delivery Only');
+	
+--DeliveryPerson(id_deliveryperson, name, surname, email_address, phone_number)
+
+create table eshop_deliveryperson(
+	id_deliveryperson serial primary key,
+	deliveryperson_name varchar(50) not null,
+	surname varchar(50) not null,
+	email varchar(100) not null,
+	phone_number varchar(20) not null
+);
+
+insert into eshop_deliveryperson(deliveryperson_name, surname, email, phone_number)
+values
+	('John', 'Smith', 'john.smith@example.com', '+1 (555) 123-4567'),
+	('Maria', 'Garcia', 'maria.garcia@example.com', '+1 (555) 987-6543'),
+	('Ankit', 'Khan', 'ahmed.khan@example.com', '+1 (555) 234-5678');
+
+--Category(id_category, name, id_supercategory*(category))
+
+create table eshop_category(
+	id_category serial primary key,
+	category_name varchar(50) not null,
+	id_supercategory integer,
+	constraint fk_subcategory_supercategory foreign key (id_supercategory) references eshop_category(id_category)
+);
+
+insert into eshop_category(category_name, id_supercategory)
+values
+	('Electronics', NULL),
+	('Accessories', NULL),
+	('Scarves', 2), 
+	('Houseware', NULL),
+	('Tea and coffee accessories', 4);
+
+
+--User(id_user, name, surname, email, username, password, phone_number)
+
+create table eshop_user(
+	id_user serial primary key,
+	user_name varchar(50) not null,
+	surname varchar(50) not null,
+	email varchar(100) not null,
+	username varchar(30) not null unique,
+	password varchar(128) not null,
+	phone_number varchar(20) not null,
+	constraint unique_email unique(email)
+);
+
+alter table eshop_user
+rename column password to user_password;
+
+insert into eshop_user(user_name, surname, email, username, user_password, phone_number)
+values
+	('Alice', 'Johnson', 'alice.j@example.com', 'alice123', 'password123', '+44 20 7946 0958'),
+	('Bob', 'Smith', 'bob.smith@example.com', 'bob_s', 'securepass', '+49 89 12345678'),
+	('Charlie', 'Brown', 'charlie.b@example.com', 'charlie', 'pass123', '+61 2 9876 5432'),
+	('Oliver', 'Jones', 'oliver.j@example.co.uk', 'oliver', 'uk123pass', '+44 20 7123 4567'),
+	('Mia', 'Wagner', 'mia.w@example.de', 'mia', 'germanpass', '+49 30 87654321'),
+	('Liam', 'Chen', 'liam.c@example.com.au', 'liam', 'aussiepass', '+61 3 1234 5678'),
+	('Chloé', 'Dubois', 'chloe.d@example.fr', 'chloe', 'frenchpass', '+33 1 2345 6789'),
+	('Lucas', 'Santos', 'lucas.s@example.com.br', 'lucas', 'brazilpass', '+55 11 98765 4321'),
+	('Aanya', 'Patel', 'aanya.p@example.in', 'aanya', 'indiapass', '+91 22 8765 4321');
+
+--Customer(id_user*(user))
+
+create table eshop_customer(
+	id_user integer primary key,
+	constraint fk_customer_user foreign key (id_user) references eshop_user(id_user)
+);
+
+insert into eshop_customer(id_user)
+values
+	(1),
+	(2),
+	(3),
+	(5),
+	(6);
+
+--Seller(id_user*(user))
+
+create table eshop_seller(
+	id_user integer primary key,
+	constraint fk_seller_user foreign key (id_user) references eshop_user(id_user)
+);
+
+insert into eshop_seller(id_user)
+values
+	(4),
+	(5),
+	(6);
+
+--Administrator(id_user*(user))
+
+create table eshop_administrator(
+	id_user integer primary key,
+	constraint fk_administrator_user foreign key (id_user) references eshop_user(id_user)
+);
+
+insert into eshop_administrator (id_user)
+values
+	(7),
+	(8),
+	(9);
+
+--Basket(id_basket, id_user_customer*(user))
+
+create table eshop_basket(
+	id_basket serial primary key,
+	id_user_customer integer not null,
+	constraint fk_basket_usercostumer foreign key (id_user_customer) references eshop_customer(id_user)
+);
+
+
+insert into eshop_basket(id_user_customer)
+values
+	(1),
+	(3),
+	(6);
+
+--Other_images(id_product*(product), other_images)
+
+create table eshop_other_images(
+	id_product integer,
+	other_image varchar(255),
+	constraint pk_other_images primary key (id_product, other_image),
+	constraint fk_otherimages_product foreign key (id_product) references eshop_product(id_product)
+);
+
+insert into eshop_other_images(id_product, other_image)
+values
+	(1, 'https://svdppitt.org/wp-content/uploads/2021/05/IMG_E0489-scaled-e1621609408813.jpg'),
+	(2, 'https://svdppitt.org/wp-content/uploads/2021/05/IMG_E0474-scaled.jpg'),
+	(3, 'https://i.ebayimg.com/images/g/xZYAAOSwoutgkJZs/s-l960.jpg');
+
+--Item(id_item, condition, description, price, main_image, id_user_seller*(seller), id_product*(product))
+
+create table eshop_item(
+	id_item serial primary key,
+	item_condition varchar(100) not null,
+	description varchar(200),
+	price integer not null,
+	main_image varchar(255),
+	id_user_seller integer not null,
+	id_product integer not null,
+	constraint fk_item_userseller foreign key (id_user_seller) references eshop_seller(id_user),
+	constraint fk_item_product foreign key (id_product) references eshop_product(id_product)
+);
+
+alter table eshop_item
+	add constraint chk_item_conditions check(item_condition in ('Used – Like New', 'Used – Very Good', 'Used – Good', 'Used - Poor')); 
+
+alter table eshop_item
+	add column quantity int
+	
+-- ova go pravam bidejkji planiram da zabranam nullevi vrednosti, a otposle mi e dodadena kolonata, svesna sum deka e rizichna operacija
+update eshop_item
+	set quantity=3
+	
+alter table eshop_item
+	alter column quantity
+	set not null
+		
+insert into eshop_item(item_condition, description, price, main_image, id_user_seller, id_product)
+values
+    ('Used – Like New', 'For true lovers of vintage tea&coffee accessories', 40, 'https://svdppitt.org/wp-content/uploads/2021/05/IMG_E0493-scaled-e1621609387929.jpg', 6, 1),
+    ('Used – Very Good', 'For true lovers of vintage tea&coffee accessories', 100, 'https://svdppitt.org/wp-content/uploads/2021/05/IMG_E0395-scaled.jpg', 5, 2),
+    ('Used – Good', 'For true lovers of old television camera', 75, 'https://svdppitt.org/wp-content/uploads/2021/05/GECamera-scaled.jpg', 4, 3);
+
+--Order(id_order, status, date_made, date_delivered, tracking_number unique, street, number, city, ZIP, country, 
+--id_user_customer*(customer), id_basket*(basket), id_deliveryperson*(deliveryperson))
+
+create table eshop_order(
+	id_order serial primary key,
+	status varchar(100) not null,
+	date_made date not null,
+	date_delivered date,
+	tracking_number varchar(100) not null unique,
+	street varchar(100) not null,
+	address_number varchar(10),
+	city varchar(100) not null,
+	ZIP varchar(10) not null,
+	country varchar(100) not null,
+	id_user_customer integer not null,
+	id_basket integer not null,
+	id_deliveryperson integer,
+	constraint fk_order_usercustomer foreign key (id_user_customer) references eshop_customer(id_user),
+	constraint fk_order_basket foreign key (id_basket) references eshop_basket(id_basket),
+	constraint fk_order_deliveryperson foreign key (id_deliveryperson) references eshop_deliveryperson(id_deliveryperson),
+ 	constraint chk_order_dates check(date_made < date_delivered or date_delivered is null)
+);
+
+insert into eshop_order(status, date_made, date_delivered, tracking_number, street, address_number, city, ZIP, country, id_user_customer, id_basket, id_deliveryperson)
+values
+	('Processing', '2023-11-5', NULL, 'TN123456', 'Main Street', '123', 'Cityville', '12345', 'USA', 1, 2, 2),
+	('Shipped', '2023-11-7', NULL, 'TN789012', 'Broadway Avenue', '456', 'Townburg', '56789', 'France', 3, 3, 3),
+	('Delivered', '2023-11-10', '2023-11-12', 'TN345678', 'High Street', '789', 'Villageton', '98765', 'Estonia', 6, 1, NULL);
+
+--Basket_contains_item(id_basket*(basket), id_item*(item), quantity)
+
+create table eshop_basket_contains_item(
+	id_basket integer,
+	id_item integer,
+	quantity integer not null,
+	constraint pk_basket_contains_item primary key (id_basket, id_item),
+	constraint fk_basketcontainsitem_basket foreign key (id_basket) references eshop_basket(id_basket),
+	constraint fk_basketcontainsitem_item foreign key (id_item) references eshop_item(id_item)
+);
+
+insert into eshop_basket_contains_item(id_basket, id_item, quantity)
+values
+	(2, 1, 1),
+	(3, 2, 1),
+	(1, 3, 1);
+
+--Order_contains_item(id_order*(order), id_item*(item), quantity)
+
+create table eshop_order_contains_item(
+	id_order integer,
+	id_item integer,
+	quantity integer not null,
+	constraint pk_order_contains_item primary key (id_order, id_item),
+	constraint fk_ordercontainsitem_order foreign key (id_order) references eshop_order(id_order),
+	constraint fk_ordercontainsitem_item foreign key (id_item) references eshop_item(id_item)
+);
+
+insert into eshop_order_contains_item(id_order, id_item, quantity)
+values
+	(4, 1, 1),
+	(5, 2, 1),
+	(6, 3, 1);
+
+--Product_is_of_category(id_product*(product), id_category*(category))
+
+create table eshop_product_is_of_category(
+	id_product integer,
+	id_category integer,
+	constraint pk_product_is_of_category primary key (id_product, id_category),
+	constraint fk_productisofcategory_product foreign key (id_product) references eshop_product(id_product),
+	constraint fk_productisofcategory_category foreign key (id_category) references eshop_category(id_category)
+);
+
+insert into eshop_product_is_of_category(id_product, id_category)
+values
+	(3, 1),
+	(1, 5),
+	(2, 5);

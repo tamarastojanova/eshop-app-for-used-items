@@ -1,0 +1,192 @@
+--1. Приказ на каталог на достапни продукти за продажба
+--- со соодветно име на продукт и слика на продукт
+
+create view available_products as
+	select *
+	from eshop_product ep
+	
+--2. Приказ на каталог на достапни производи(items) за продажба - со соодветно име на продукт, име на оглас, опис на item-от, 
+--дата кога е огласен, слика, цена, достапна количина, и категорија на производот.	
+--(И листањето на продукти по избрана категорија би го користело овој поглед, 
+--само со додатно филтрирање според категоријата избрана од корисникот)
+	
+--TODO: листање на сите наткатегории рекурзивно
+
+create view items_for_sale as
+	select ep.id_product, ep.name as product_name, ei.id_item, ei.listing_title, ei.description, ei.date_added_for_sale, ei.main_image, ei.id_user, 
+	ei.price, ei.location, ec.id_category, ec.name as category_name
+	from eshop_product ep 
+	join eshop_item ei on ei.id_product = ep.id_product
+	join eshop_product_is_of_category epioc on ep.id_product = epioc.id_product 
+	join eshop_category ec on epioc.id_category = ec.id_category 
+
+		
+--3. Приказ на каталог на главни постоечки категории (категории кои немаат наткатегорија), 
+--како и приказ на сите постоечки категории - со соодветна слика и име на категоријата. 
+-- Во принцип би требало да се излистаат главните категории, а при клик на секоја од нив да се прикажат соодветните поткатегории и така
+-- да тече циклусот понатака.
+
+create view available_main_categories as
+	select *
+	from all_available_categories
+	where id_supercategory isnull
+
+create view all_available_categories as
+	select *
+	from eshop_category ec 
+
+	
+--4. Приказ на сите се уште недоставени нарачки - со нивен tracking_number, статус, дата кога се направени, 
+--адреса каде треба да се достават, информации за човекот на кој треба да му бидат доставени (име, презиме, телефонски број) 
+--и податоци за доставувачот - профилна фотографија, име, презиме и телефонски број, 
+--доколку тој е доделен (бидејќи delivery person е nullable), но треба да се прикажат и оние за кои се уште не е доделен доставувач.
+
+create view undelivered_orders as
+	select eo.id_order, eo.tracking_number, eo.status, eo.date_made, eo.street, eo.house_number, eo.city, eo.zip, eo.country,
+	eu.id_user, eu.profile_picture as customer_profile_picture, eu.name as customer_name, eu.surname as customer_surname, eu.phone_number as customer_phone_number, 
+	ed.id_deliveryperson, ed.profile_picture as deliveryperson_profile_picture, ed.name as deliveryperson_name, 
+	ed.surname as deliveryperson_surname, ed.phone_number as deliveryperson_phone_number
+	from eshop_order eo 
+	join eshop_user eu on eo.id_user = eu.id_user 
+	left outer join eshop_deliveryperson ed on eo.id_deliveryperson = ed.id_deliveryperson 
+	where eo.date_delivered isnull 
+	
+--5. Приказ на производи(items) во некоја кошничка - со профилна фотографија, име и презиме на продавачот, име на точниот производ(item) 
+--т.е. име на огласот, главна слика на точниот производ, негова тежина, количина којашто е избрана и цена. 
+--На крај, со помош на ова view треба да се прикаже вкупната цена на сите производи во кошничката(subtotal), 
+--цената за достава која зависи од тежината на производот(shipping_cost), како и вкупната цена за продуктите 
+--со се цената за достава(total_cost).
+
+create view full_basket_view as
+	select eb.id_basket, 
+	eu.id_user, eu.profile_picture, eu.name, eu.surname, 
+	ei.id_item, ei.listing_title, ei.main_image, ei.price,
+	ebci.quantity, cpob.subtotal, cpob.shipping_cost, cpob.total_cost, ebci.quantity as quantity_item
+	from eshop_basket eb 
+	join eshop_user eu on eb.id_user = eu.id_user 
+	join eshop_basket_contains_item ebci on eb.id_basket = ebci.id_basket 
+	join eshop_item ei on ebci.id_item = ei.id_item 
+	join calculated_prices_of_baskets cpob on eb.id_basket = cpob.id_basket
+	where ebci.id_item = ei.id_item 
+	
+create view items_in_basket_helper as
+	select eb.id_basket, 
+	eu.id_user, eu.profile_picture, eu.name, eu.surname, 
+	ei.id_item, ei.listing_title, ei.main_image, ei.price, ei.weight,
+	ebci.quantity
+	from eshop_basket eb 
+	join eshop_user eu on eb.id_user = eu.id_user 
+	join eshop_basket_contains_item ebci on eb.id_basket = ebci.id_basket 
+	join eshop_item ei on ebci.id_item = ei.id_item 
+	
+--create view helper_view as 
+--	select iib.id_basket as id_basket, iib.price as price, iib.quantity as quantity, ei.weight as weight
+--	from full_basket_view fbv 
+--	join eshop_item ei on fbv.id_item = ei.id_item 
+	
+	
+create view calculated_prices_of_baskets as
+	select distinct(id_basket), sum(price * quantity) as subtotal,
+	case 
+		when sum(weight) >= 1 then 20
+		when sum(weight) >= 0.5 then 10
+		else 5
+	end as shipping_cost, 
+	sum(price * quantity) + case 
+		when sum(weight) >= 1 then 20
+		when sum(weight) >= 0.5 then 10
+		else 5
+	end as total_cost 
+	from items_in_basket_helper
+	group by id_basket
+
+--6. Приказ на детали за селектиран производ(item) - повеќе фотографии освен основната (доколку продавачот ги има додадено), име на оглас на 
+--производот, опис на производот, достапна количина, во каква состојба е, цена, категории во кои е сместен, информации за продавачот - профилна 
+--фотографија, име и презиме, е-маил и телефонски број за контакт.
+
+--Ми се листаат повеќе пати заради различни дополнителни фотографии:
+
+create view details_for_item as
+	select ei.id_item, eoi.other_image, ei.listing_title, ei.description, ei.quantity, ei.item_condition, ei.price, 
+	ep.id_product, ec.id_category, ec.name as category_name,
+	eu.id_user, eu.profile_picture, eu.name as seller_name, eu.surname, eu.email, eu.phone_number 
+	from eshop_item ei 
+	left outer join eshop_other_images eoi on ei.id_item = eoi.id_item
+	join eshop_product ep on ei.id_product = ep.id_product 
+	left outer join eshop_product_is_of_category epioc on ep.id_product = epioc.id_product 
+	left outer join eshop_category ec on epioc.id_category = ec.id_category 
+	join eshop_user eu on ei.id_user = eu.id_user 
+	
+drop view details_for_item 
+
+select * from eshop_product_is_of_category epioc  
+	
+--ФОРМИ:
+
+--1. Огласување на нов item -> Соодветните типови на корисници ќе имаат можност да огласат свој item за продажба. 
+--За да се огласи нов item, ќе треба да се избере категорија, на кој product се однесува, наслов за огласот(име на item), состојба на item-от, 
+--опис, количина, цена, главна и дополнителни фотографии, и тежина на производот која е потребна за апликацијата да пресмета цена 
+--на услугите за достава кои самата ги нуди. На пример, при додавање на нов item, корисникот треба да избере една или
+--повеќе категории(од ниско ниво, односно највгнездените) во кои тој би го сместил тој item кој го огласува. Потоа, со dropdown листа
+--ќе му биде дозволено да еден главен продукт на кој производот кој ќе се огласува соодветствува(се листаат продукти кои веќе се сместени 
+--во избраната категорија, а доколку нема соодветен продукт, доколку е администратор, тој може да додаде сопствен продукт со формата бр. 2) Вака ќе се добие
+--ставката id_product. Откако ќе заврши со овие важни избори, потребно е да се додели име на огласот за производот, како и да се 
+--избере една од можните опции за состојба во која се наоѓа item-от, кои ќе се излистаат со dropdown листа. Треба да се внесе и опис, достапна
+--количина, цена на производот, тежина, и да се прикачи главна фотографија и дополнителни фотографии. Главната ќе се смести во самиот item,
+--а останатите во multivalued attribute табелата eshop_other_images. Id_user_seller ќе се земе од самиот профил на корисникот-продавач
+--кој го прави огласот.
+	
+--Пример:
+	
+	insert into eshop_item(item_condition, main_image, id_user_seller, id_product, quantity, listing_title, description, price, date_added_for_sale, weight)
+	values
+			('Used – Very Good', 'https://i.ebayimg.com/images/g/m5IAAOSwVRZlbRcr/s-l1600.jpg', 4, 6, 1,
+	'Apple MacBook Air 13.3" (512GB SSD, Intel Core i5 10th Gen., 1.10 GHz, 8GB) Laptop - Gold - MVH52LL/A (March, 2020)',
+	'Battery cycle 1%. Works great. No dent or scratches.
+But it has stickers mark ok back lid, but doesn’t affect the computer performance.
+This is excellent for Christmas present. Comes with original charger. No password or iClouds locked. 
+We have fast shipping. Max 3 days', 304.99, now(), 1.5)
+
+	insert into eshop_other_images(id_item, other_image)
+values
+	(8,'https://i.ebayimg.com/images/g/eukAAOSwzDplbRcv/s-l1600.jpg'),
+	(8,'https://i.ebayimg.com/images/g/-k8AAOSwVQBlbRcy/s-l1600.jpg'),
+	(8,'https://i.ebayimg.com/images/g/JlgAAOSwpPRlbRc2/s-l1600.jpg')
+	
+--8цата тука репрезентира сериски генериран id_item.
+
+--2. Додавање на нов продукт -> Соодветните типови на корисници ќе имаат можност да додадат нов продукт. 
+--За додавање на нов продукт, потребно ќе биде да се додаде само име на продуктот, 
+--и некоја репрезентативна фотографија за истиот.
+
+--Пример:
+	
+insert into eshop_product(product_name)
+values
+	('Dresses', 'https://i.ebayimg.com/thumbs/images/g/QFQAAOSwlI1jMjEY/s-l225.webp'),
+	('Balls', 'https://i.ebayimg.com/thumbs/images/g/AgQAAOSwlhpZgyJD/s-l225.webp'),
+	('Macbooks', 'https://i.ebayimg.com/thumbs/images/g/drsAAOSw8kpje~12/s-l225.webp')
+	
+--3. Правење на нова нарачка -> Правењето на нова нарачка од страна на купувачот ќе ми биде поврзано
+--со клик на "checkout" на кошничката. Податоците од селектираните производи во кошничката ќе се пренесат 
+--во нарачката. Id-то на купувачот ќе се земе од самиот негов профил, и id_basket ќе се земе од кошничката од која селектираме
+--посакувани производи и правиме checkout. Дополнително, купувачот ќе треба да ја внесе својата адреса - улица, број, зип, држава. 
+--Истата нема да се зема од
+--податоците на корисникот, бидејќи корисникот може да си избира различни адреси за достава, кои не секогаш ќе соодветствуваат на онаа
+--адреса на која тој е регистриран како жител, или пак можеби ја прави нарачката за некој близок.
+--Date_made ќе се пополни со тогашниот датум, а tracking_number автоматски ќе се генерира како и id_order(tracking number ima format TNXXXX). 
+--DeliveryPerson на почетокот ќе биде null, а потоа некој delivery person од достапните 
+--ќе биде доделен за доставување на таа нарачка од страна на соодветниот корисник.
+	
+--Пример: 
+	
+insert into eshop_order(status, date_made, date_delivered, street, address_number, city, zip, country, id_user_customer, id_basket, id_deliveryperson)
+values 
+	('Processing', now(), null, 'Main Street', '123', 'Cityville', '12345', 'USA', 1, 2, null)
+
+--Откако некој доставувач ќе се пријави да ја доставува нарачката (како ова ќе се регулира е надвор од доменот на мојата апликација),
+--ќе се повика ова query:
+
+update eshop_order
+set id_deliveryperson = 5
+where eshop_order.id_order = 8

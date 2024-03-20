@@ -1,0 +1,89 @@
+
+-- 1. Месечен извештај за најпопуларни производи(items)
+-- (најпопуларен производ е производ којшто е најпродаван)
+
+select extract(month from eo.date_made) as month, ei.listing_title as item, count(*) as total_sales
+from eshop_order_contains_item eoci 
+join eshop_order eo on eoci.id_order = eo.id_order 
+join eshop_item ei on eoci.id_item = ei.id_item 
+group by 1, 2
+order by total_sales desc
+
+-- 2. Дневен извештај за нарачки и нивниот вкупен износ(со и без цена за достава)
+
+select eo.date_made, count(*) as num_orders, sum(subtotal) as sum_without_shipping_cost, sum(total_cost) as sum_with_shipping_cost
+from eshop_order eo 
+join eshop_basket eb on eo.id_basket = eb.id_basket 
+join calculated_prices_of_baskets cpob on eb.id_basket = cpob.id_basket
+group by 1
+
+-- 3. Годишен извештај за активност на корисници
+-- (бројот на нарачки и вкупната сума на нарачките(без/со достава??) 
+-- за секој корисник во текот на годината)
+
+select eu.username, extract(year from eo.date_made)::varchar(4) as year, count(*) as num_orders, sum(cpob.subtotal) as sum_without_shipping_cost, sum(cpob.total_cost) as sum_with_shipping_cost
+from eshop_user eu 
+join eshop_order eo on eo.id_user_customer = eu.id_user 
+join calculated_prices_of_baskets cpob on eo.id_basket = cpob.id_basket 
+group by 1, 2
+
+-- 4. Месечен извештај за кој доставувач колку нарачки доставил нарачки
+
+select extract(month from eo.date_delivered) as month, ed.email, count(*)
+from eshop_order eo 
+join eshop_deliveryperson ed on eo.id_deliveryperson = ed.id_deliveryperson 
+where eo.date_delivered is not null
+group by 1,2;
+
+-- 5. За секој корисник колку itemи купил и продал
+
+select eu.id_user, eu.username, case
+								when b.num_bought isnull then 0
+								else b.num_bought
+								end,
+case
+when s.num_sold isnull then 0
+else s.num_sold
+end
+from eshop_user eu 
+left outer join (
+select eu.id_user, eu.username, count(eoci.id_item) as num_bought
+from eshop_order eo 
+left outer join eshop_order_contains_item eoci on eo.id_order = eoci.id_order 
+right outer join eshop_customer ec on eo.id_user_customer = ec.id_user
+left outer join eshop_user eu on ec.id_user = eu.id_user 
+group by 1
+order by num_bought desc
+) as b on eu.id_user = b.id_user
+left outer join (
+select eu.id_user, eu.username, count(ei.id_item) as num_sold
+from eshop_order_contains_item eoci
+left outer join eshop_item ei on eoci.id_item = ei.id_item 
+right outer join eshop_seller es on ei.id_user_seller = es.id_user 
+left outer join eshop_user eu on es.id_user = eu.id_user 
+group by 1
+order by num_sold desc
+) as s on eu.id_user = s.id_user
+
+select eu.id_user, eu.username, count(eoci.id_item) as num_bought
+from eshop_order eo 
+left outer join eshop_order_contains_item eoci on eo.id_order = eoci.id_order 
+right outer join eshop_customer ec on eo.id_user_customer = ec.id_user
+left outer join eshop_user eu on ec.id_user = eu.id_user 
+group by 1
+order by num_bought desc
+
+select eu.id_user, eu.username, count(ei.id_item) as num_sold
+from eshop_order_contains_item eoci
+left outer join eshop_item ei on eoci.id_item = ei.id_item 
+right outer join eshop_seller es on ei.id_user_seller = es.id_user 
+left outer join eshop_user eu on es.id_user = eu.id_user 
+group by 1
+order by num_sold desc
+
+
+
+
+
+
+
