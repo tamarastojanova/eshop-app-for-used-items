@@ -1,0 +1,218 @@
+﻿@model List<eshop_app.Models.UndeliveredOrdersViewModel>
+
+@{
+    ViewBag.Title = "Show undelivered";
+    bool isAdministrator = (bool)ViewBag.isAdministrator;
+}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-rv+RDEpLKN3W5qKZAZR5NCrjK1cFeJQbZ8igcNLx1RJbqbrtHIp1m5En2brvLcIn" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyO8f+xtB+yjOuZ4a8a5EYEhSCOjpF" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-rv+RDEpLKN3W5qKZAZR5NCrjK1cFeJQbZ8igcNLx1RJbqbrtHIp1m5En2brvLcIn" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <style>
+
+        .form-horizontal {
+            max-width: 600px; /* Adjust the max-width as needed */
+            margin: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px; /* Adjust the margin between form groups */
+            margin-left: 27%;
+        }
+
+        span {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #E1B800; /* Border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Box shadow */
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #E1B800; /* Border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Box shadow */
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 3%;
+            margin-bottom: 2%;
+            text-align: center;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .container.body-content {
+            margin-top: 0; /* Remove the default top margin */
+            margin-bottom: 0;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            margin-right: -3%;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.2rem;
+                margin-left: 0.4rem;
+                margin-top: 0.2rem;
+            }
+
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+
+        .btn-container {
+            text-align: center;
+        }
+
+            .btn-container button {
+                margin: 0 10px;
+            }
+
+        table {
+            font-family: Arial;
+            width: 70%; /* Adjust the table width as needed */
+            margin: auto; /* Center the table on the page */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the table */
+            margin-top: 1%;
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<h2>Undelivered orders</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            <span>Tracking number</span>
+        </th>
+        <th>
+            <span>Status</span>
+        </th>
+        <th>
+            <span>Date made</span>
+        </th>
+        <th>
+            <span>Date delivered</span>
+        </th>
+        <th>
+            <span>Address details</span>
+        </th>
+        <th>
+            <span>Delivery person</span>
+        </th>
+        @if (isAdministrator)
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var order in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => order.tracking_number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => order.status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => order.date_made)
+            </td>
+            <td>
+                Not delivered yet
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => order.street) @Html.DisplayFor(modelItem => order.house_number)
+                <br />
+                @Html.DisplayFor(modelItem => order.city) @Html.DisplayFor(modelItem => order.zip)
+                <br />
+                @Html.DisplayFor(modelItem => order.country)
+            </td>
+            <td>
+                @if (order.id_deliveryperson != null)
+                {
+                    <img src="@order.deliveryperson_profile_picture" alt="Other Image" style="width: 40px; height: 40px; border-radius: 20px;
+                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); margin-right: 4%; margin-bottom: 3%;" />
+                    @($"{Html.DisplayFor(modelItem => order.deliveryperson_name)} {Html.DisplayFor(modelItem => order.deliveryperson_surname)}")
+                    <br />
+                    @Html.DisplayFor(modelItem => order.deliveryperson_phone_number)
+                }
+                else
+                {
+                    <text>Not assigned yet</text>
+                }
+            </td>
+            @if (isAdministrator)
+            {
+            <td>
+                <button class="btn-fancy btn" onclick="location.href='@Url.Action("Details", "Orders", new { id = order.id_order })'">
+                    <i class="fa fa-info-circle"></i> Details
+                </button>
+            </td>
+            }
+        </tr>
+    }
+</table>
+
+
+

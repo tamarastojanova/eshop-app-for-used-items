@@ -1,0 +1,274 @@
+﻿@model eshop_app.Models.FullBasketViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-rv+RDEpLKN3W5qKZAZR5NCrjK1cFeJQbZ8igcNLx1RJbqbrtHIp1m5En2brvLcIn" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyO8f+xtB+yjOuZ4a8a5EYEhSCOjpF" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-rv+RDEpLKN3W5qKZAZR5NCrjK1cFeJQbZ8igcNLx1RJbqbrtHIp1m5En2brvLcIn" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            margin-top: 1%;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.1rem;
+                margin-left: 0.2rem;
+                margin-top: 0.2rem;
+            }
+
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+        .short-hr-with-shadow {
+            height: 2px; /* Set the desired height of the shorter horizontal line */
+            width: 200px;
+            background-color: #8c713e; /* Set the color of the line */
+            border: none;
+            border-collapse: collapse;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+            margin: 10px 0; /* Adjust margin as needed */
+        }
+        table {
+            font-family: Arial;
+            width: 70%; /* Adjust the table width as needed */
+            margin: 20px auto; /* Center the table on the page */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the table */
+            margin-top: 3%;
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        tr.border-bottom td {
+        }
+
+        th {
+            background-color: #d2a671; /* Light-brown background for header cells */
+        }
+
+        table tr:nth-child(even) {
+            background-color: lightgrey; /* Lighter background for even rows */
+        }
+
+        table tr:nth-child(odd) {
+            background-color: pink; /* Slightly darker background for odd rows */
+        }
+
+        .item-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d2a671; /* Light-brown colored border for checkbox */
+            border-radius: 4px;
+            margin: 0 auto; /* Center the checkbox in its cell */
+            display: block;
+        }
+
+        td img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        td:nth-child(2) {
+            font-style: italic; /* Italicize the font in the "Item" column */
+        }
+
+        .btn {
+            margin: 5px auto; /* Center the button in its cell */
+            display: block;
+        }
+        .remove {
+            width: 50%;
+            height: 10%;
+        }
+
+    </style>
+</head>
+
+<!-- Table for displaying items -->
+<table class="table table-bordered">
+    <thead>
+        <tr class="border-bottom">
+            <th></th>
+            <th>Item</th>
+            <th>Main image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Actions</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.items)
+        {
+            <tr class="border-bottom">
+                <td>
+                    @if (item.Quantity > 0)
+                    {
+                        <input type="checkbox" class="item-checkbox" value="@item.Id" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="item-checkbox" value="@item.Id" disabled />
+                    }
+                </td>
+                <td>@item.ListingTitle</td> <!-- Adjust this based on your actual item properties -->
+                <td><img src="@item.MainImage" alt="Main Image" width="200" height="150" style="border-radius: 7px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); " /></td>
+                <td id="quantity-@item.Id">
+                    @if (item.Quantity > 0)
+                    {
+                        var quantityValue = Math.Min(Model.quantityAddedForItemWithId[item.Id], item.Quantity);
+                        @quantityValue
+                    }
+                    else
+                    {
+                        var text = "Out of stock!";
+                        @text
+                    }
+                </td>
+                <td id="price-@item.Id">@item.Price</td> <!-- Adjust this based on your actual item properties -->
+                <td id="weight-@item.Id" style="display:none;">@item.Weight</td>
+                <td style="width: 17%;">
+                    <button class="btn btn-danger remove" onclick="location.href='@Url.Action("RemoveItem", "Baskets", new { id = item.Id })'">
+                        <i class="fa fa-trash"></i> Remove
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h4>Subtotal: $<span id="subtotal">0.00</span></h4>
+        <h4>Shipping Cost: $<span id="shipping-cost">0.00</span></h4>
+        <hr class="short-hr-with-shadow" />
+        <h4>Total Cost: $<span id="total-cost">0.00</span></h4>
+    </div>
+</div>
+
+
+<button class="btn btn-primary btn-fancy" onclick="checkout()" style="margin-left: 0%;">
+    <i class="fa fa-check"></i> Checkout
+</button>
+
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function checkout() {
+            console.log("povikana4")
+            var selectedItems = [];
+            // Get all checked checkboxes
+            var checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            console.log(checkboxes)
+            if (checkboxes.length == 0) {
+                return;
+            }
+            // Extract the values (item ids) from checked checkboxes
+            checkboxes.forEach(function (checkbox) {
+                selectedItems.push(checkbox.value);
+            });
+            // Redirect to Checkout method with selected items
+            window.location.href = "@Url.Action("FillOut", "Orders")?itemIds=" + selectedItems.join(',');
+        }
+
+        // Function to update prices based on selected items
+        function updatePrices(selectedItems) {
+            console.log("povikana3")
+            var subtotal = 0;
+            var weight = 0;
+            console.log("selected items")
+            console.log(selectedItems)
+            // Calculate subtotal and shipping cost based on selected items
+            if (selectedItems.length > 0) {
+                selectedItems.forEach(function (item) {
+                    var price = parseFloat($('#price-' + item.id).text());
+                    subtotal += price * item.quantity;
+                    console.log(item.quantity);
+                    console.log(item.weight);
+                    weight += item.quantity * item.weight;
+                });
+            }
+            else {
+                // If no items are selected, set shipping cost to 0.00
+                $('#subtotal').text('0.00');
+                $('#shipping-cost').text('0.00');
+                $('#total-cost').text('0.00');
+                return; // Exit the function to avoid further calculations
+            }
+
+            shippingCost = calculateShippingCost(weight);
+            // Calculate total cost
+            var totalCost = subtotal + shippingCost;
+
+            // Update the UI with the calculated prices
+            $('#subtotal').text(subtotal.toFixed(2));
+            $('#shipping-cost').text(shippingCost.toFixed(2));
+            $('#total-cost').text(totalCost.toFixed(2));
+        }
+
+        // Function to calculate shipping cost based on item properties
+        function calculateShippingCost(weight) {
+            console.log(weight)
+            if (weight >= 1)
+                return 20;
+            else if (weight >= 0.5)
+                return 10;
+            else return 5;
+            console.log("povikana1")
+        }
+
+        // Attach change event handler to checkboxes
+        $(document).on('change', '.item-checkbox', function () {
+            var selectedItems = [];
+            // Get all checked checkboxes
+            var checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            if (checkboxes.length == 0) {
+                var x = 0;
+                $('#shipping-cost').text(x.toFixed(2));
+            }
+            // Extract the values (item ids and quantities) from checked checkboxes
+            checkboxes.forEach(function (checkbox) {
+                var id = checkbox.value;
+                var quantity = parseInt($('#quantity-' + id).text());
+                console.log("quantity")
+                console.log(quantity)
+                var weight = parseFloat($('#weight-' + id).text());
+                console.log("ids")
+                console.log(id)
+                selectedItems.push({ id: id, quantity: quantity, weight: weight });
+            });
+            // Update prices based on selected items
+            updatePrices(selectedItems);
+        });
+
+    </script>
+}
+
+

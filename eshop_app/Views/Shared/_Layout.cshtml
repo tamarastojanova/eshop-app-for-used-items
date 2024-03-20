@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thriftify</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        .navbar {
+            background-color: #A68C73;
+        }
+
+        .navbar-brand {
+            color: #fff !important; /* Set the text color to white */
+            font-size: 25px;
+            font-family: "Trebuchet MS";
+            font-weight: bold;
+        }
+
+        .navbar-toggler {
+            border-color: #fff; /* Set the border color of the toggle button */
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff !important; /* Set the text color of the links to white */
+            margin-right:10px; /* Add some margin between the links */
+            margin-left: 0px;
+            font-size: 20px;
+            font-family: "Times New Roman";
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #000 !important; /* Change text color on hover */
+        }
+
+        .navbar-collapse {
+            justify-content: flex-end; /* Align links to the right */
+        }
+
+        .container.body-content {
+            background-color: #f8f9fa; /* Set a light background color for the content area */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px; /* Add margin at the top for separation from content */
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
+        <div class="container">
+            @Html.ActionLink("Thriftify", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Categories", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Products", "Index", "Products", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Listings", "Index", "Items", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Orders", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Tamara Stojanova</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

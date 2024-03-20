@@ -1,0 +1,191 @@
+﻿@model IEnumerable<eshop_app.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+    bool isAdministrator = ViewBag.isAdministrator;
+}
+<head>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+
+
+    <style>
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .card {
+            transition: transform 0.3s ease;
+            width: 10rem !important; /* Adjust the width as needed */
+            text-align: center; /* Center the text within the card body */
+            margin: 0.5rem;
+            background-color: #F7F7F7;
+
+        }
+
+            .card:hover {
+                transform: scale(1.1);
+            }
+
+        .card-body {
+            text-align: center; /* Center the text within the card body */
+        }
+
+        .card-title {
+            font-size: 1.1rem !important;
+            font-family: "Times New Roman";
+            color: black;
+            font-weight: bold;
+        }
+
+            .card-title a {
+                text-decoration: underline black !important;
+            }
+
+        .card-img-top {
+            height: 135px;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-btn {
+            cursor: pointer;
+            background-color: #ddd;
+            border: none;
+            padding: 5px 10px;
+        }
+
+        .add-to-cart-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .add-to-cart-btn i {
+                margin-right: 5px;
+            }
+
+        .container.body-content {
+            margin-top: 0; /* Remove the default top margin */
+            margin-bottom: 0;
+        }
+
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            margin-top: 2%;
+            margin-left: 2%;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Set your box shadow */
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.3rem;
+                margin-left: 0.3rem;/* Adjust icon spacing */
+                margin-top: 0.2rem;
+            }
+
+            /* Hover effect */
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+
+        #items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            #items-table th,
+            #items-table td {
+                padding: 10px;
+                text-align: center;
+                border: 1px solid #A68C73; /* Light brown border for cells */
+            }
+
+            #items-table th {
+                background-color: #A68C73; /* Light brown header background */
+                color: white;
+            }
+
+        /* Prettier sorting icons */
+        .sorting,
+        .sorting_asc,
+        .sorting_desc {
+            background-color: #A68C73; /* Light brown color for sorting icons */
+            color: white;
+        }
+
+        /* Search button */
+        div.dataTables_filter input {
+            border: 1px solid #FED959; /* Yellow border for search input */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<p>
+    @if (isAdministrator)
+    {
+        <a href="@Url.Action("Create")" class="btn btn-fancy btn-create">
+            <i class="fa fa-plus"></i> Create New
+        </a>    
+    }
+</p>
+
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var product in Model.OrderBy(p => p.ProductName))
+        {
+            <div class="col-md-4 mb-1" style="margin-right: -14rem;">
+                <div class="card position-relative" style="width: 15rem;">
+                    <br />
+                    <img src="@product.ProductImageURL" alt="Product Image" class="card-img-top" />
+                    <div class="card-body">
+                        <a href="@Url.Action("FindItems", "Products", new { id = product.Id })">
+                            <h3 class="card-title">@product.ProductName</h3>
+                        </a>
+                        <!-- Add other product details as needed -->
+                    </div>
+                    @if (isAdministrator)
+                    {
+                        <a href="@Url.Action("Edit", "Products", new { id = product.Id })" class="btn btn-secondary btn-edit">
+                            <i class="fa fa-pencil"></i> Edit
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <!-- Include DataTables initialization script -->
+    <script>
+        $(document).ready(function () {
+            $('.row').DataTable({
+                "paging": false,
+                "searching": true
+                 "order": [[1, 'asc']]
+            });
+        });
+    </script>
+}

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<eshop_app.Models.CategoryLevel2>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>Categories</h1>
+<hr />
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+        h1 {
+            margin-top: 3%;
+            text-align: center;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .category-item {
+            font-size: 20px; /* Set your desired font size */
+            font-weight: bold;
+            font-family: 'Trebuchet MS';
+            line-height: 1.5;
+        }
+
+        .subcategory-list {
+            list-style: none;
+            padding-left: 20px;
+            display: none; /* Hide subcategories by default */
+        }
+
+        .category-name, .subcategory-name {
+            text-decoration: none;
+            color: black; /* Set your desired text color */
+            cursor: pointer;
+            font-size: 25px; /* Set your desired font size */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow to the text */
+            transition: color 0.3s;
+        }
+        .category-name:hover, .subcategory-name:hover {
+            color: #FFD547; /* Change color on hover */
+        }
+
+        .category-arrow {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+@foreach (var mc in Model)
+{
+    <div class="category-item">
+        <span class="category-name" onclick="toggleSubcategories(this)">
+            <span class="category-arrow">></span>@mc.mainCategory.CategoryName
+        </span>
+        <ul class="subcategory-list">
+            @foreach (var sc in mc.Categories)
+            {
+                <li>
+                    <span class="subcategory-name" onclick="toggleSubcategories(this)">
+                        <span class="category-arrow">></span><a href="@Url.Action("ShowProducts", new { id = sc.Id })" style="text-decoration: none; color: black;">@sc.CategoryName</a>
+                    </span>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+<script>
+    function toggleSubcategories(element) {
+        var subcategoryList = element.nextElementSibling;
+        subcategoryList.style.display = subcategoryList.style.display === "none" ? "block" : "none";
+    }
+</script>

@@ -1,0 +1,21 @@
+﻿eshop_app.Models.AddToRoleModel
+@{
+
+
+    ViewBag.Title = "AddUserToRole";
+}
+
+<h2>Add User To Role</h2>
+
+@using (Html.BeginForm("AddUserToRole", "Account"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.selectedRole, new SelectList(Model.roles), new { @class = "form-control" })
+    </div>
+    <button type="submit">Add</button>
+}
+

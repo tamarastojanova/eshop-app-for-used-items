@@ -1,0 +1,51 @@
+﻿.card {
+    transition: transform 0.3s ease;
+    width: 15vh; /* Adjust the width as needed */
+    height: 20vh;
+    text-align: center; /* Center the text within the card body */
+    margin: 0.2rem;
+}
+
+.card:hover {
+        transform: scale(1.05);
+}
+
+.card-body {
+    text-align: center; /* Center the text within the card body */
+    width: 15vh;
+    height: 10vh;
+}
+
+.card-title {
+    font-size: 0.9rem; /* Adjust the font size as needed */
+}
+
+.card-img-top {
+    height: 10vh;
+    width: 12vh;
+}
+
+.quantity-input {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    cursor: pointer;
+    background-color: #ddd;
+    border: none;
+    padding: 5px 10px;
+}
+
+.add-to-cart-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-to-cart-btn i {
+        margin-right: 5px;
+}

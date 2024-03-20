@@ -1,0 +1,49 @@
+﻿@model IEnumerable<eshop_app.Models.Item>
+
+@{
+    ViewBag.Title = "My Listings";
+}
+
+<h2>My listings</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => row.ListingTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => row.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => row.DateAddedForSale)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => row.MainImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => row.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => row.Location)
+            </td>
+            @{
+                string categoryNames = string.Join(",", row..Select(cat => cat.CategoryName));
+            }
+            <td>
+                @categoryNames
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = row.id_item }) |
+                @Html.ActionLink("Details", "Details", new { id = row.id_item }) |
+                @Html.ActionLink("Delete", "Delete", new { id = row.id_item })
+            </td>
+        </tr>
+    }
+
+</table>

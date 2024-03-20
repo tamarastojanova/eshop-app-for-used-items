@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNet.Identity
+
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <style>
+        .btn {
+            padding: 0.3rem;
+            background-color: #FED959;
+            margin-top: 7%;
+            border: none; /* Set your border color */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Set your box shadow */
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+        }
+
+        .btn:hover {
+            background-color: #FFD547;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+<ul class="navbar-nav navbar-right">
+    <li>@Html.ActionLink("My listings", "MyListings", "Items", new { area = "" }, new { @class = "nav-link" })</li>
+    <li>
+        <a class="btn btn-success ml-3" href="/Baskets">
+            <i class="fa fa-shopping-cart"></i> Cart
+        </a>
+    </li>
+    <li>
+        @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "", "", htmlAttributes: new { title = "Manage", @class = "nav-link" })
+    </li>
+    <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+</ul>
+    }
+}
+else
+{
+    <ul class="navbar-nav navbar-right">
+        <li>
+            <a class="btn btn-success ml-3" href="/Baskets">
+                <i class="fa fa-shopping-cart"></i> Cart
+            </a>
+        </li>
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+    </ul>
+}
+
+@section Scripts {
+    <script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-i8iq+TszTXhIkMmL9X1deqY/2eOqEuSsUBZVXU+Z2xSYTHvpyKZqWkw1GMR5/5rg0dPyxywn0Ja6q+99z1lviw==" crossorigin="anonymous" />
+    </script>
+}

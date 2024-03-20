@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+        #title {
+            font-size: 3.5em;
+            font-family: "Trebuchet MS";
+            font-weight: bold;
+            text-align: center;
+            margin-top: 2%;
+        }
+
+        main {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 70vh;
+            margin-bottom: -2vh;
+        }
+
+        .contact-card {
+            height: 85%;
+            width: 30%;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            margin: 10px;
+            margin-top: 0px;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px); /* Lift the card slightly on hover */
+        }
+
+        .card-content {
+            text-align: center;
+            padding: 20px;
+            height: 60%;
+        }
+
+        .card-image {
+
+        }
+
+        .card-text {
+            margin-top: 20px;
+        }
+
+        .card-button {
+            display: block;
+            width: 30%;
+            padding: 10px;
+            text-align: center;
+            background-color: #21c790; /* Green button color */
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .card-button:hover {
+            background-color: #17805d; /* Darker green on hover */
+        }
+
+        .container.body-content {
+            margin-top: 0; /* Remove the default top margin */
+            margin-bottom: 0;
+
+        }
+    </style>
+</head>
+<body>
+    <h2 id="title">Contact us</h2>
+
+    <main>
+        <div class="contact-card">
+            <div class="card-image" style="margin-left: 35%; margin-top: 20%;">
+                <img src="~/Content/DataTables/images/phone-call.png" alt="Card 1 Image" style="width: 50%; height: 50%;">
+            </div>
+            <div class="card-content" style="margin-top: 10%;">
+                <h2>BY PHONE</h2>
+                <div class="card-text">
+                    <p>(Monday to Friday, 7am to 3pm PST)</p>
+                    <p>North America Toll-Free</p>
+                    <p>1-877-930-7483</p>
+                    <p>International</p>
+                    <p>1-604-647-0780</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-card">
+            <div class="card-image" style="margin-left: 35%; margin-top: 20%;">
+                <img src="~/Content/DataTables/images/unboxing.png" alt="Card 2 Image" style="width: 50%; height: 50%;">
+            </div>
+            <div class="card-content" style="margin-top: 10%;">
+                <h2>START A NEW CASE</h2>
+                <div class="card-text">
+                    <p>Just send us your questions or concerns by starting a new case and we will give you the help you need.</p>
+                </div>
+                <a href="#" class="card-button" style="margin-left: 35%; margin-top: 15%;">Start here</a>
+            </div>
+        </div>
+
+        <div class="contact-card">
+            <div class="card-image" style="margin-left: 35%; margin-top: 20%;">
+                <img src="~/Content/DataTables/images/chat-box.png" alt="Card 3 Image" style="width: 50%; height: 50%;">
+            </div>
+            <div class="card-content" style="margin-top: 10%;">
+                <h2>LIVE CHAT</h2>
+                <div class="card-text">
+                    <p>Chat with a member of our in-house team.</p>
+                </div>
+                <a href="#" class="card-button" style="margin-left: 35%; margin-top: 28%;">Start chat</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

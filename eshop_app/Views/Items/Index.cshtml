@@ -1,0 +1,212 @@
+﻿@model IEnumerable<eshop_app.Models.ItemsForSaleViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    string IdUser = (string)ViewBag.IdUser;
+    bool isAdministrator = (bool)ViewBag.isAdministrator;
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/custom-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <style>
+        .dataTables_filter input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #E1B800; /* Border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Box shadow */
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        table {
+            font-family: Arial;
+            width: 70%; /* Adjust the table width as needed */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the table */
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        tr.border-bottom td {
+        }
+
+        th {
+            background-color: #d2a671; /* Light-brown background for header cells */
+        }
+
+        table tr:nth-child(even) {
+            background-color: lightgrey; /* Lighter background for even rows */
+        }
+
+        table tr:nth-child(odd) {
+            background-color: pink; /* Slightly darker background for odd rows */
+        }
+
+        .remove {
+            width: 50%;
+            height: 10%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            margin-top: 2%;
+            margin-left: 0;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Set your box shadow */
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.3rem;
+                margin-left: 0.3rem; /* Adjust icon spacing */
+                margin-top: 0.2rem;
+            }
+
+            /* Hover effect */
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+    </style>
+</head>
+
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-fancy btn-create">
+        <i class="fa fa-plus"></i> Add listing
+    </a>
+</p>
+<table class="table" id="items-table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Listing title</th>
+            <th>Description</th>
+            <th style="width: 75px;">Posted on</th>
+            <th>Price</th>
+            <th>Location</th>
+            <th>Categories</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@row.main_image" alt="Main Image" width="250px" ; height="175px" ; />
+                </td>
+                <td style="font-style: italic;">
+                    @Html.DisplayFor(modelItem => row.listing_title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => row.description)
+                </td>
+                <td style="width: 75px;">
+                    @Html.DisplayFor(modelItem => row.date_added_for_sale)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => row.price)$
+                </td>
+                <td>
+                    <script>
+                        console.log('@row.location');
+                    </script>
+                    @Html.DisplayFor(modelItem => row.location)
+                </td>
+                @{
+                    string categoryNames = string.Join(",", row.Categories.Select(cat => cat.CategoryName));
+                }
+                <td>
+                    @categoryNames
+                </td>
+                <td>
+                    @if (IdUser != null && IdUser.Equals(row.id_user))
+                    {
+                        <a href="@Url.Action("Edit", "Items", new { id = row.id_item })" class="btn btn-secondary btn-edit btn-fancy" style="width: 75px; padding: 0.2rem; ">
+                            <i class="fa fa-pencil"></i> Edit
+                        </a>
+                    }
+                    <a class="btn-fancy btn" onclick="location.href='@Url.Action("Details", new { id = row.id_item })'" style="width: 100px; padding: 0.2rem;">
+                        <i class="fa fa-info-circle"></i> Details
+                    </a>
+                    @if (isAdministrator || (IdUser != null && IdUser.Equals(row.id_user)))
+                    {
+                        <button class="btn btn-fancy remove delete-link" style="width: 110px; padding: 0.2rem;" data-id-items="@row.id_item">
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyO8f+xtB+yjOuZ4a8a5EYEhSCOjpF" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#items-table .delete-link").on("click", function () {
+                var button = $(this);
+
+                bootbox.confirm("Do you want to delete this item?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "GET",
+                            url: "/Items/Delete/" + button.attr("data-id-items"),
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            },
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            var table = $("#items-table").DataTable({
+                "order": [[3, "desc"]], // Sort by the 4th column (date_added_for_sale) in descending order
+                "pageLength": 5, // Set the number of items per page
+                "dom": '<"top"f>rt<"bottom"p><"clear">', // Customize the layout of DataTables elements
+            });
+
+            // Add a custom search input
+            $("#items-table_filter").append('<br/><br/>');
+
+
+            // Apply custom search
+            $(".search-box input").on("keyup", function () {
+                table.search(this.value).draw();
+            });
+        });
+
+
+    </script>
+}

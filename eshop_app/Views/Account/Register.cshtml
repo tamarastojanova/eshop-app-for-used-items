@@ -1,0 +1,115 @@
+﻿@model eshop_app.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            margin-top: 2%;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.3rem;
+                margin-left: 0.3rem;
+                margin-top: 0.2rem;
+            }
+
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+            .form-control {
+                margin-bottom: 1%;
+            }
+    </style>
+</head>
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <h4>Create a new account.</h4>
+        <hr />
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-6">
+                <span>Name</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </div>
+
+                <span>Surname</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Surname, new { @class = "form-control" })
+                </div>
+
+                <span>Email address</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+
+                <span>Username</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                </div>
+
+                <span>Phone number</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <span>Profile picture</span>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.ProfilePicture, new { @class = "form-control" })
+                </div>
+
+                <span>Password</span>
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                </div>
+
+                <span>Confirm password</span>
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                </div>
+
+                @Html.Label("Choose a role", new { @class = "col-md-2 col-form-label" })
+                <div class="form-group">
+                    @Html.DropDownListFor(m => m.selectedRole, new SelectList(Model.Roles), new { @class = "form-control" })
+                </div>
+
+                <div class="offset-md-2 col-md-10">
+                    <input type="submit" value="Register" class="btn btn-fancy" />
+                </div>
+            </div>
+        </div>
+        <br />
+
+    }
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

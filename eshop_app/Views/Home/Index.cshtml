@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #F8F9FA;
+        }
+
+        main {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .banner {
+            width: 80vw; /* 80% of the viewport width */
+            height: 80vh; /* 100% of the viewport height */
+            background: url('https://www.maya.ph/hubfs/Best-Value_Shopping-Online.jpg#keepProtocol') no-repeat center center;
+            background-size: cover;
+            filter: brightness(70%) opacity(0.8); /* Adjust brightness and opacity as needed */
+        }
+
+        .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            font-family: "Trebuchet MS";
+            font-weight: 900;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: white;
+            background-color: #FFD160; /* Your desired button color */
+            border-radius: 25px;
+            transition: background-color 0.3s ease-in-out;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            background-color: #FFBE1E; /* Hover color */
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+            color: white;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .container.body-content {
+            margin-top: 0; /* Remove the default top margin */
+            margin-bottom: 0;
+        }
+        main {
+            margin-bottom: -20vh; /* Remove any potential bottom margin on the main element */
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="banner"></div>
+        <div class="overlay">
+            <h1>Explore, shop, and redefine your online shopping journey with us.</h1>
+            <a href="@Url.Action("Index", "Items")" class="cta-button">See Listings</a>
+        </div>
+    </main>
+
+</body>
+</html>

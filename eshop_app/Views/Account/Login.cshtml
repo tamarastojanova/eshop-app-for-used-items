@@ -1,0 +1,131 @@
+﻿@using eshop_app.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+        .btn-fancy {
+            padding: 0.4rem;
+            background-color: #FED959;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            margin-right: -3%;
+        }
+
+            .btn-fancy i {
+                margin-right: 0.3rem;
+                margin-left: 0.3rem;
+                margin-top: 0.2rem;
+            }
+
+            .btn-fancy:hover {
+                background-color: #FFD547;
+                color: white;
+            }
+        .btn-reg {
+            padding: 0.4rem;
+            background-color: lightgrey;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18.5px;
+            font-family: "Times New Roman";
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            color: white;
+            margin-right: -3%;
+            margin-top: 2%;
+            margin-bottom: 4%;
+        }
+        .btn-reg:hover {
+            background-color: lightsteelblue;
+            color: white;
+        }
+    </style>
+</head>
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <section id="loginForm">
+                @if (ViewBag.AuthErr != null)
+                {
+                    <p class="text-danger">@ViewBag.AuthErr</p>
+                }
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h4>Use a local account to log in.</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="row">
+                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-10">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.RememberMe)
+                                @Html.LabelFor(m => m.RememberMe)
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="offset-md-2 col-md-10">
+                            <input type="submit" class="btn-fancy" value="Log in" class="btn btn-outline-dark" />
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="window.location.href='@Url.Action("Register")'" class="btn btn-reg" s>
+                        <i class="fa fa-arrow-left"></i> Register as a new user
+                    </button>
+
+                    @* Enable this once you have account confirmation enabled for password reset functionality
+            <p>
+                @Html.ActionLink("Forgot your password?", "ForgotPassword")
+            </p>*@
+                }
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section id="socialLoginForm">
+                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
